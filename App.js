@@ -2,20 +2,23 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import LoginScreen from './Apps/screens/LoginScreen';
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
-import Constants from "expo-constants"
-
+import TabNavigation from './Apps/navigations/TabNavigation';
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
   return (
-    <ClerkProvider publishableKey={Constants.expoConfig.extra.clerkPublishableKey}>
-      <View>
+    <ClerkProvider publishableKey='pk_test_aW5jbHVkZWQtbW9sbHktOTAuY2xlcmsuYWNjb3VudHMuZGV2JA'>
+      <View className="flex-1 bg-white">
+      <StatusBar style="auto" /> 
       <SignedIn>
-          <Text>You are Signed in</Text>
-      </SignedIn>
+          <NavigationContainer>
+            <TabNavigation/>
+          </NavigationContainer>
+        </SignedIn>
         <SignedOut>
-        <LoginScreen />
+        <LoginScreen/>
         </SignedOut>
-      </View>
+    </View>
     </ClerkProvider>
   
   );
