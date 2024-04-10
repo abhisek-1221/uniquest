@@ -6,7 +6,6 @@ import { useOAuth } from '@clerk/clerk-expo';
 WebBrowser.maybeCompleteAuthSession();
 
 
-
 export default function LoginScreen() {
     
     useWarmUpBrowser();
@@ -39,7 +38,7 @@ export default function LoginScreen() {
       />
     <View className="p-9 rounded-t-3xl shadow-md">
         <Text className="text-[30px] text-center font-bold">UniQuest</Text>
-        <Text className="text-[18px] text-slate-500 mt-3 mb-10 text-center">"The effortless way to collab & resolve community problems"</Text> 
+        <Text className="text-[18px] text-slate-500 mt-3 p-6 mb-10 text-center">Join Forces with Peers Near and Far with UniQuest</Text> 
         <TouchableOpacity onPress={onPress} className="p-4 bg-purple-400 rounded-full ">
             <Text className="text-white text-center text-[20px] align-middle">Get Started</Text>
         </TouchableOpacity>
