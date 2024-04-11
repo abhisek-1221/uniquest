@@ -4,9 +4,11 @@ import LoginScreen from './Apps/screens/LoginScreen';
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
 import TabNavigation from './Apps/navigations/TabNavigation';
 import { NavigationContainer } from '@react-navigation/native';
+import AppNavigation from './Apps/navigations/AppNavigation';
 
 export default function App() {
   return (
+  
     <ClerkProvider publishableKey='pk_test_aW5jbHVkZWQtbW9sbHktOTAuY2xlcmsuYWNjb3VudHMuZGV2JA'>
       <View className="flex-1 bg-white">
       <StatusBar style="auto" /> 
@@ -16,7 +18,8 @@ export default function App() {
           </NavigationContainer>
         </SignedIn>
         <SignedOut>
-        <LoginScreen/>
+        <AppNavigation/>
+        {/* <LoginScreen/> */}
         </SignedOut>
     </View>
     </ClerkProvider>
