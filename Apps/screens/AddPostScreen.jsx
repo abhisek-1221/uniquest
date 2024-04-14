@@ -5,13 +5,14 @@ import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 import { Formik } from 'formik';
 import { TextInput, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { useUser } from '@clerk/clerk-expo';
 
 
 const AddPostScreen = () => {
   const db = getFirestore(app);
+  const {user} = useUser();
   const storage = getStorage(app);
   const [categoryList, setCategoryList] = useState([]);
   const [image, setImage] = useState(null);
@@ -47,6 +48,7 @@ const AddPostScreen = () => {
   }
     
     const onSubmitMethod = async (values) => {
+      values.datetime = new Date().toISOString();
       values.image = image;
       const resp = await fetch(image);
       const blob = await resp.blob();
@@ -58,6 +60,9 @@ const AddPostScreen = () => {
         getDownloadURL(storageRef).then(async(downloadUrl)=>{
           console.log(downloadUrl);
           values.image = downloadUrl;
+          values.userName = user.fullName;
+          values.userEmail = user.primaryEmailAddress.emailAddress;
+          values.userImage = user.imageUrl;
           const docRef = await addDoc(collection(db, "userPosts"), values)
           if(docRef.id){
             console.log('Post added successfully');
@@ -76,7 +81,7 @@ const AddPostScreen = () => {
 
       </View>
         <Formik
-      initialValues={{name:'',desc:'',datetime:'',category:'',address:'',image:'',userName:'',userEmail:'',userImage:''}} 
+      initialValues={{title:'',description:'',datetime:'',category:'',image:'',userName:'',userEmail:'',userImage:''}} 
       onSubmit={(values) => onSubmitMethod(values)}      
           >
             {({handleChange, handleBlur, handleSubmit, setFieldValue, values}) => (
@@ -92,9 +97,9 @@ const AddPostScreen = () => {
                 </TouchableOpacity>
                 
                 <TextInput
-                  onChangeText={handleChange('name')}
-                  onBlur={handleBlur('name')}
-                  value={values?.name}
+                  onChangeText={handleChange('title')}
+                  onBlur={handleBlur('title')}
+                  value={values?.title}
                   placeholder="Title"
                   placeholderTextColor="#ffffff"
                   style={styles.input}
