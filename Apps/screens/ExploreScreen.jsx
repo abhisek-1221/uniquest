@@ -1,10 +1,9 @@
 import { View, Text, ScrollView, Image, TouchableOpacity, FlatList, StyleSheet, TextInput } from 'react-native'
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '@react-navigation/native'
 import Icons from "@expo/vector-icons/MaterialIcons"
 import { useState } from 'react'
- const avt = "https://static.vecteezy.com/system/resources/thumbnails/000/580/521/small_2x/sarmi10-07.jpg"
+ const avt = "https://st.depositphotos.com/1364916/2428/v/450/depositphotos_24283903-stock-illustration-teamwork-hands-and-sun-logo.jpg"
 
  const propertyData = [
   {
@@ -14,7 +13,7 @@ import { useState } from 'react'
     location: 'Delhi NCR',
     collegeCollabs: '13',
     searching: '6',
-    Ongoing: '2',
+    OnHold: '2',
     Collaborated: '34'
   },
   {
@@ -24,7 +23,7 @@ import { useState } from 'react'
     location: 'Delhi NCR',
     collegeCollabs: '8',
     searching: '5',
-    Ongoing: '2',
+    OnHold: '2',
     Collaborated: '27'
   },
   {
@@ -34,7 +33,7 @@ import { useState } from 'react'
     location: 'Delhi NCR',
     collegeCollabs: '21',
     searching: '12',
-    Ongoing: '2',
+    OnHold: '2',
     Collaborated: '77'
   },
   {
@@ -44,7 +43,7 @@ import { useState } from 'react'
     location: 'Delhi NCR',
     collegeCollabs: '45',
     searching: '6',
-    Ongoing: '2',
+    OnHold: '2',
     Collaborated: '83'
   },
 
@@ -246,12 +245,12 @@ export default function ExploreScreen() {
     },
     searching: {
       fontSize: 16,
-      color: '#ff8c00', // Red-ish text for emphasis
+      color: '#a37fc9', // Red-ish text for emphasis
       fontWeight: 'bold'
     },
-    Ongoing: {
+    OnHold: {
       fontSize: 16,
-      color: '#ff8c00', // Orange text for ongoing
+      color: '#ff8c00', // Orange text for OnHold
       fontWeight: 'bold'
     },
     Collaborated: {

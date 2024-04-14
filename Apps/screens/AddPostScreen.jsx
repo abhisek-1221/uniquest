@@ -10,6 +10,7 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { useUser } from '@clerk/clerk-expo';
 
 
+
 const AddPostScreen = () => {
   const db = getFirestore(app);
   const {user} = useUser();
@@ -144,7 +145,7 @@ const AddPostScreen = () => {
                   value={item?.name}/>
                   ))}
                 </Picker>
-                  <TouchableOpacity className="p-4 bg-purple-600 rounded-full mt-10"
+                <TouchableOpacity className="p-4 bg-purple-600 rounded-full mt-10"
                   onPress={handleSubmit}>
                     <Text className="text-white text-center text-[16px]">Submit</Text>
                   </TouchableOpacity>
