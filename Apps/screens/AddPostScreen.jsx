@@ -1,47 +1,94 @@
-import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { app } from "../../firebaseConfig";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 import { Formik } from 'formik';
 import { TextInput, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+
 
 const AddPostScreen = () => {
   const db = getFirestore(app);
+  const storage = getStorage(app);
   const [categoryList, setCategoryList] = useState([]);
+  const [image, setImage] = useState(null);
   useEffect(() => {
     getCategoryList();
   }, [])
 
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+
   const getCategoryList = async () => {
-    setCategoryList([]);
-const querySnapshot = await getDocs(collection(db, "Category"));
-      querySnapshot.forEach((doc) => {
-        console.log(doc.id, " => ", doc.data());
-        setCategoryList([...categoryList, doc.data()]);
-      });
+    const querySnapshot = await getDocs(collection(db, "Category"));
+    const newCategories = [];
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+      newCategories.push(doc.data());  // Collect all new categories
+    });
+    setCategoryList(newCategories);  // Set all at once
   }
+    
+    const onSubmitMethod = async (values) => {
+      values.image = image;
+      const resp = await fetch(image);
+      const blob = await resp.blob();
+      const storageRef = ref(storage, 'images/' + Date.now()+"jpg");
+
+      uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log('Uploaded a blob or file!', snapshot);
+      }).then((resp)=>{
+        getDownloadURL(storageRef).then(async(downloadUrl)=>{
+          console.log(downloadUrl);
+          values.image = downloadUrl;
+          const docRef = await addDoc(collection(db, "userPosts"), values)
+          if(docRef.id){
+            console.log('Post added successfully');
+          }
+        })
+        });
+      }
+
+
   return (
-    <View className="bg-slate-800 h-screen">
-      <View className="p-12">
-      <View className="flex flex-row gap-20 align-top mt-1">
-      <Text className="text-[30px] font-bold textAlign-center text-purple-200 ">Add Post</Text>
-      <Ionicons className="flex flex-row align-right" name="add-circle-outline" size={30} color="white" />
+    <ScrollView>
+        <View className="bg-slate-800 h-screen">
+      <View className="px-9">
+      <View className="flex justify-center items-center gap-20 align-top mt-0.5 ">
+      <Text className="text-[30px] font-bold  text-purple-200 mb-2">Add Post</Text>
 
       </View>
         <Formik
-          initialValues={{name: '', description: '', category: '', price: '', image: ''}}
-          onSubmit={(values) => {
-            console.log(values);}
-        }      
+      initialValues={{name:'',desc:'',datetime:'',category:'',address:'',image:'',userName:'',userEmail:'',userImage:''}} 
+      onSubmit={(values) => onSubmitMethod(values)}      
           >
             {({handleChange, handleBlur, handleSubmit, setFieldValue, values}) => (
               <View>
-                <TouchableOpacity onPress={()=>console.log("Image Select")}>
-                <Image source={require('../../assets/upload.avif')} 
-                style={{width: 330, height: 80, borderRadius: 10, marginTop:2}}
-                />
+                <TouchableOpacity onPress={pickImage}>
+                {image?
+              <Image source={{uri:image}} style={{width:80,height:80,borderRadius:15}}/>
+              :<Image source={require('../../assets/upload.avif')} 
+              style={{width: 330, height: 80, borderRadius: 10, marginTop:2}}
+              />
+              }
+                
                 </TouchableOpacity>
                 
                 <TextInput
@@ -70,6 +117,14 @@ const querySnapshot = await getDocs(collection(db, "Category"));
                   placeholderTextColor="#ffffff"
                   style={styles.input}
                 />
+                <TextInput
+                  onChangeText={handleChange('location')}
+                  onBlur={handleBlur('location')}
+                  value={values?.location}
+                  placeholder="Location"
+                  placeholderTextColor="#ffffff"
+                  style={styles.input}
+                />
                 <Picker
                 selectedValue={values?.category}
                 style={styles.input}
@@ -80,6 +135,7 @@ const querySnapshot = await getDocs(collection(db, "Category"));
                   {categoryList&&categoryList.map((item,index)=>( 
                   <Picker.Item key={index} 
                   label={item?.name}
+                  labelStyle={{color:'white'}}
                   value={item?.name}/>
                   ))}
                 </Picker>
@@ -92,6 +148,8 @@ const querySnapshot = await getDocs(collection(db, "Category"));
         </Formik>
       </View>
     </View>
+    </ScrollView>
+    
   )
 }
 
@@ -111,5 +169,3 @@ const styles = StyleSheet.create({
 )
 
 export default AddPostScreen
-
-
