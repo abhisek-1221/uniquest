@@ -3,7 +3,7 @@ import React from 'react'
 
 const ExploreScreen = () => {
   return (
-    <View>
+    <View className="bg-black h-screen">
       <Text>ExploreScreen</Text>
     </View>
   )
